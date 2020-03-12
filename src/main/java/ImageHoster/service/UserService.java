@@ -5,6 +5,8 @@ import ImageHoster.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
+
 @Service
 public class UserService {
 
@@ -29,6 +31,16 @@ public class UserService {
             return existingUser;
         } else {
             return null;
+        }
+    }
+
+    //validate with the given user with logged-in user
+    public Boolean userValidate(User user, HttpSession session){
+        User loggedinUser = (User) session.getAttribute("loggeduser");
+        if (loggedinUser.getId() == user.getId()){
+            return true;
+        }else {
+            return false;
         }
     }
 
