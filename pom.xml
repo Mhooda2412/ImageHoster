@@ -50,12 +50,12 @@
             <scope>test</scope>
         </dependency>
         <!--Adding javassist dependency to run the project on jdk 11 -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>3.25.0-GA</version>
         </dependency>
-
+-->
     </dependencies>
 
 </project>
