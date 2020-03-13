@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -40,9 +41,19 @@ public class UserController {
     //This controller method is called when the request pattern is of type 'users/registration' and also the incoming request is of POST type
     //This method calls the business logic and after the user record is persisted in the database, directs to login page
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
-    public String registerUser(User user) {
-        userService.registerUser(user);
-        return "redirect:/users/login";
+    public String registerUser(User user, Model model, RedirectAttributes redirectAttributes) {
+        String password = user.getPassword();
+        Boolean isValidPassword = passwordStrength(password);
+        String error = "Password must contain atleast 1 alphabet, 1 number & 1 special character";
+        if(isValidPassword) {
+            userService.registerUser(user);
+            return "users/login";
+        }else{
+            redirectAttributes.addAttribute("passwordTypeError", error);
+            model.addAttribute("passwordTypeError", error);
+            redirectAttributes.addFlashAttribute("passwordTypeError", error);
+            return "redirect:/users/registration";
+        }
     }
 
     //This controller method is called when the request pattern is of type 'users/login'
@@ -78,5 +89,22 @@ public class UserController {
         List<Image> images = imageService.getAllImages();
         model.addAttribute("images", images);
         return "index";
+    }
+
+    //password Strength check
+    private Boolean passwordStrength(String password){
+
+        String[] partialRegexChecks = { ".*[a-zA-Z]+.*", // Character
+                ".*[0-9]+.*", // digits
+                ".*[!@#$%^&*(),.?:{}|<>]+.*"// symbols
+        };
+        if(password.matches(partialRegexChecks[0]) && password.matches(partialRegexChecks[1])  && password.matches(partialRegexChecks[2])){
+            return true;
+
+        }else{
+            return false;
+        }
+
+
     }
 }
